@@ -21,11 +21,16 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-    const existingUser = await User.find({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return new Response(JSON.stringify({ message: "Email already exists" }), {
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({
+          message: "Email already exists, feel free to login with it",
+        }),
+        {
+          status: 400,
+        }
+      );
     }
 
     if (password !== confirmPassword) {
