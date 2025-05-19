@@ -1,15 +1,29 @@
 import jwt from "jsonwebtoken";
-export function authenticateToken(req, res, next) {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
+import User from "@/model/user";
+import { connectToDatabase } from "@/lib/dbconfig";
+
+export const authenticate = async (req) => {
+  const authHeader = req.headers.get("authorization");
+
+  console.log("Auth Header:", req.headers.get("authorization"));
+
+  if (!authHeader || !authHeader.startsWith("Bearer")) {
+    throw new Error("No token provided");
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
-    req.user = user;
-    next();
-  });
-}
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded Token:", decoded);
+
+    await connectToDatabase();
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) throw new Error("User not found");
+
+    return user;
+  } catch (error) {
+    console.error("Token verification error:", error);
+    throw new Error("Invalid token");
+  }
+};
