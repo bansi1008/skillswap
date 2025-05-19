@@ -1,6 +1,7 @@
 import bycrypt from "bcryptjs";
 import User from "@/model/user";
 import { connectToDatabase } from "@/lib/dbconfig";
+import { generateToken } from "@/lib/jwt";
 
 export async function POST(request) {
   const { email, password } = await request.json();
@@ -40,13 +41,13 @@ export async function POST(request) {
         }
       );
     }
-    const token = generateToken(user);
+    const token = generateToken(existingUser);
 
     return Response.json(
       {
         message: "Login successful",
         token,
-        userId: user._id,
+        UserId: existingUser._id,
       },
       { status: 200 }
     );
