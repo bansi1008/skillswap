@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema({
   confirmPassword: {
     type: String,
     required: function () {
-      // Required only when creating new user or modifying password
       return this.isNew || this.isModified("password");
     },
     validate: {
