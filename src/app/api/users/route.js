@@ -14,7 +14,7 @@ export async function GET(req) {
 
     const user = await User.find(
       {},
-      { password: 0, confirmPassword: 0 }
+      { password: 0, confirmPassword: 0, email: 0 }
     ).lean();
     if (!user) {
       return new Response(JSON.stringify({ message: "User not found" }), {
