@@ -38,6 +38,13 @@ const userSchema = new mongoose.Schema({
   skillsWanted: {
     type: [String],
   },
+  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  connectionRequestsSent: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  ],
+  connectionRequestsReceived: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
