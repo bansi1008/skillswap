@@ -1,0 +1,277 @@
+.footer {
+  background-color: #111;
+  color: white;
+  padding: 5rem 0 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.branding {
+  max-width: 300px;
+}
+
+.logo {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.logoText {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.logoHighlight {
+  color: #4caf50;
+}
+
+.tagline {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.socialLink:hover {
+  background-color: #4caf50;
+  transform: translateY(-3px);
+}
+
+.socialIcon {
+  font-size: 1.2rem;
+}
+
+.linksSection {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.linkColumn {
+  min-width: 160px;
+}
+
+.linkTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.linkTitle::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background-color: #4caf50;
+}
+
+.linkList {
+  list-style: none;
+  padding: 0;
+}
+
+.linkList li {
+  margin-bottom: 0.8rem;
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.link:hover {
+  color: #4caf50;
+}
+
+.newsletter {
+  margin: 2rem 0 3rem;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  max-width: 600px;
+}
+
+.newsletterTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.newsletterText {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletterInput {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.95rem;
+}
+
+.newsletterInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletterInput:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.newsletterButton {
+  padding: 0 1.5rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletterButton:hover {
+  background-color: #388e3c;
+}
+
+.bottomSection {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .topSection {
+    flex-direction: column;
+  }
+
+  .branding {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .linksSection {
+    gap: 2rem;
+  }
+
+  .newsletter {
+    padding: 1.5rem;
+  }
+
+  .newsletterForm {
+    flex-direction: column;
+  }
+
+  .bottomSection {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .linksSection {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .linkColumn {
+    width: 100%;
+  }
+
+  .linkTitle {
+    font-size: 1rem;
+  }
+
+  .link {
+    font-size: 0.9rem;
+  }
+
+  .newsletter {
+    padding: 1.25rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .newsletterTitle {
+    font-size: 1.1rem;
+  }
+
+  .newsletterText {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .newsletterInput {
+    padding: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .newsletterButton {
+    width: 100%;
+    padding: 0.7rem;
+  }
+
+  .socialLinks {
+    justify-content: center;
+  }
+
+  .branding {
+    text-align: center;
+  }
+
+  .logoText {
+    font-size: 1.5rem;
+  }
+}
