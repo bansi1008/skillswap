@@ -79,8 +79,8 @@ const CTA = () => {
             Ready to Start Your Skill-Swapping Journey?
           </h2>
           <p className={styles.description}>
-            Join thousands of users already connecting, learning, and sharing
-            skills on our platform. Sign up today and unlock your potential!
+            thousands of users already connecting, learning, and sharing skills
+            on our platform. Sign up today and unlock your potential!
           </p>
         </div>
         <div className={styles.buttonContainer} ref={buttonRef}>
