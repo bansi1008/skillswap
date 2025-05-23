@@ -1,7 +1,13 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
+  const [year, setYear] = useState("");
+
+  useEffect(() => {
+    setYear(new Date().getFullYear().toString());
+  }, []);
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -167,13 +173,11 @@ const Footer = () => {
           </form>
         </div>
 
-        <div className={styles.bottomSection}>
+        <div className={styles.bottomSection} suppressHydrationWarning={true}>
           <p className={styles.copyright}>
-            © {new Date().getFullYear()} SkillSwap. All rights reserved.
+            © {year} SkillSwap. All rights reserved.
           </p>
-          <p className={styles.madeWith}>
-            @2025 all rights reserved. Made by{" Bansi"}
-          </p>
+          <p className={styles.madeWith}>Made by{" Bansi"}</p>
         </div>
       </div>
     </footer>

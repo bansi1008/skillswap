@@ -170,6 +170,7 @@ const Testimonials = () => {
                       width={43}
                       height={43}
                       className={styles.avatarImage}
+                      alt="User Avatar"
                     />
                   </div>
                   <div className={styles.userDetails}>
