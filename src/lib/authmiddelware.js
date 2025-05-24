@@ -3,20 +3,16 @@ import User from "@/model/user";
 import { connectToDatabase } from "@/lib/dbconfig";
 
 export const authenticate = async (req) => {
-  const authHeader = req.headers.get("authorization");
+  const cookieHeader = req.headers.get("cookie");
+  const tokenMatch = cookieHeader?.match(/token=([^;]+)/);
+  const token = tokenMatch?.[1];
 
-  console.log("Auth Header:", req.headers.get("authorization"));
-
-  if (!authHeader || !authHeader.startsWith("Bearer")) {
-    throw new Error("No token provided");
+  if (!token) {
+    throw new Error("No token provided in cookies");
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded Token:", decoded);
-
     await connectToDatabase();
     const user = await User.findById(decoded.id).select("-password");
     if (!user) throw new Error("User not found");
