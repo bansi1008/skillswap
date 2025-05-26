@@ -1,0 +1,135 @@
+/* Header */
+.header {
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  text-decoration: none;
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4caf50;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.navButton.active {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.userName {
+  color: white;
+  font-weight: 500;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  background: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.logoutButton {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.logoutButton:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .nav {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .userMenu {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContent {
+    padding: 0.75rem;
+  }
+
+  .nav {
+    gap: 0.25rem;
+  }
+
+  .navButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+}

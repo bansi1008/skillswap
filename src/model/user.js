@@ -1,51 +1,54 @@
 const mongoose = require("mongoose");
 const bycrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  confirmPassword: {
-    type: String,
-    required: function () {
-      return this.isNew || this.isModified("password");
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    validate: {
-      validator: function (value) {
-        return this.password === value;
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    confirmPassword: {
+      type: String,
+      required: function () {
+        return this.isNew || this.isModified("password");
       },
-      message: "Passwords do not match",
+      validate: {
+        validator: function (value) {
+          return this.password === value;
+        },
+        message: "Passwords do not match",
+      },
     },
-  },
 
-  location: {
-    type: String,
-  },
-  skillsOffered: {
-    type: [String],
-  },
+    location: {
+      type: String,
+    },
+    skillsOffered: {
+      type: [String],
+    },
 
-  skillsWanted: {
-    type: [String],
+    skillsWanted: {
+      type: [String],
+    },
+    connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    connectionRequestsSent: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    ],
+    connectionRequestsReceived: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    ],
   },
-  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  connectionRequestsSent: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  ],
-  connectionRequestsReceived: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  ],
-});
+  { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
