@@ -12,12 +12,6 @@ export async function PATCH(req) {
       });
     }
 
-    if (!location) {
-      return new Response(JSON.stringify({ message: "Location is required" }), {
-        status: 400,
-      });
-    }
-
     user.skillsWanted = skillsWanted || user.skillsWanted;
     user.skillsOffered = skillsOffered || user.skillsOffered;
     user.location = location || user.location;

@@ -107,24 +107,37 @@ export async function POST(request) {
     }
 
     const token = generateToken(existingUser);
-    const maxAge = rememberMe ? 7 * 24 * 60 * 60 : 0;
 
+    // Build cookie options based on rememberMe
     const cookieOptions = [
       `token=${token}`,
       "HttpOnly",
       "Path=/",
       "SameSite=Strict",
-      "Secure",
     ];
-    if (maxAge) cookieOptions.push(`Max-Age=${maxAge}`);
 
-    return new Response(JSON.stringify({ message: "Login successful" }), {
-      status: 200,
-      headers: {
-        "Set-Cookie": cookieOptions.join("; "),
-        "Content-Type": "application/json",
-      },
-    });
+    // Only add Secure flag in production (HTTPS)
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.push("Secure");
+    }
+
+    // If rememberMe is true, set cookie to expire in 7 days
+    // If rememberMe is false, don't add Max-Age (makes it a session cookie)
+    if (rememberMe) {
+      const maxAge = 7 * 24 * 60 * 60; // 7 days in seconds
+      cookieOptions.push(`Max-Age=${maxAge}`);
+    }
+
+    return new Response(
+      JSON.stringify({ message: "Login successful", token }),
+      {
+        status: 200,
+        headers: {
+          "Set-Cookie": cookieOptions.join("; "),
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("Login Error:", error);
     return new Response(JSON.stringify({ message: "Internal server error" }), {
