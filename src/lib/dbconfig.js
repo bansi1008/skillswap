@@ -16,6 +16,7 @@ export async function connectToDatabase() {
       .connect(MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        ssl: true,
       })
       .then((mongoose) => mongoose);
   }
