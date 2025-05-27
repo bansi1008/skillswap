@@ -57,7 +57,11 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Signup Error:", error);
+    console.error("Signup Error:", {
+      message: error.message,
+      stack: error.stack,
+    });
+
     return new Response(JSON.stringify({ error: "Failed to create user" }), {
       status: 500,
     });
