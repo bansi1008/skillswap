@@ -1,7 +1,8 @@
 import { authenticate } from "@/lib/authmiddelware";
 
 export async function PATCH(req) {
-  const { skillsWanted, skillsOffered, location } = await req.json();
+  const { skillsWanted, skillsOffered, location, bio, portfolioLinks } =
+    await req.json();
 
   try {
     const user = await authenticate(req);
@@ -15,6 +16,8 @@ export async function PATCH(req) {
     user.skillsWanted = skillsWanted || user.skillsWanted;
     user.skillsOffered = skillsOffered || user.skillsOffered;
     user.location = location || user.location;
+    user.bio = bio || user.bio;
+    user.portfolioLinks = portfolioLinks || user.portfolioLinks;
 
     await user.save();
 
