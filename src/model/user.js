@@ -32,6 +32,16 @@ const userSchema = new mongoose.Schema(
     location: {
       type: String,
     },
+    bio: {
+      type: String,
+      default: "No bio provided",
+    },
+    portfolioLinks: [
+      {
+        name: { type: String, required: true }, 
+        url: { type: String, required: true },
+      },
+    ],
     skillsOffered: {
       type: [String],
     },
