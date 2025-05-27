@@ -1,15 +1,44 @@
 import styles from "./MatchesTab.module.css";
 import { useState, useEffect } from "react";
+import ViewProfile from "./Viewprofile";
 
 export default function MatchesTab({ setActiveTab }) {
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   useEffect(() => {
     fetchMatches();
   }, []);
 
+  const fetchUserProfile = async (userId) => {
+    try {
+      setProfileLoading(true);
+      console.log("Fetching user profile for ID:", userId);
+      const response = await fetch(`/api/oneuser/${userId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+      const data = await response.json();
+      if (data.user) {
+        setSelectedUser(data.user);
+        setShowProfile(true);
+      }
+    } catch (err) {
+      console.error("Error fetching user profile:", err);
+      alert("Failed to load user profile");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const closeProfile = () => {
+    setShowProfile(false);
+    setSelectedUser(null);
+  };
   const fetchMatches = async () => {
     try {
       setIsLoading(true);
@@ -152,13 +181,24 @@ export default function MatchesTab({ setActiveTab }) {
 
             <div className={styles.matchActions}>
               <button className={styles.connectButton}>🤝 Connect</button>
-              <button className={styles.viewProfileButton}>
-                👤 View Profile
+              <button
+                className={styles.viewProfileButton}
+                onClick={() => fetchUserProfile(match._id || match.id)}
+                disabled={profileLoading}
+              >
+                {profileLoading === (match._id || match.id)
+                  ? "⏳ Loading..."
+                  : "👤 View Profile"}
               </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Profile Modal */}
+      {showProfile && selectedUser && (
+        <ViewProfile user={selectedUser} onClose={closeProfile} />
+      )}
     </div>
   );
 }

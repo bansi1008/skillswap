@@ -31,6 +31,7 @@ export async function GET(req) {
       const matchScore = matchSkills + wantedmatchSkills;
       return {
         name: user.name,
+        id: user._id,
 
         skillsOffered: user.skillsOffered,
         skillsWanted: user.skillsWanted,
