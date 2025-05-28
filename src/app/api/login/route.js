@@ -77,7 +77,10 @@ export async function POST(request) {
       );
     }
 
-    const existingUser = await User.findOne({ email });
+    // Normalize email to lowercase before search
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (!existingUser) {
       return new Response(
         JSON.stringify({
@@ -116,13 +119,10 @@ export async function POST(request) {
       "SameSite=Strict",
     ];
 
-    // Only add Secure flag in production (HTTPS)
     if (process.env.NODE_ENV === "production") {
       cookieOptions.push("Secure");
     }
 
-    // If rememberMe is true, set cookie to expire in 7 days
-    // If rememberMe is false, don't add Max-Age (makes it a session cookie)
     if (rememberMe) {
       const maxAge = 7 * 24 * 60 * 60; // 7 days in seconds
       cookieOptions.push(`Max-Age=${maxAge}`);

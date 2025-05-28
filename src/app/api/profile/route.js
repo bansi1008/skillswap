@@ -1,4 +1,8 @@
 import { authenticate } from "@/lib/authmiddelware";
+function normalizeSkills(skills) {
+  if (!Array.isArray(skills)) return skills;
+  return skills.map((skill) => skill.trim().toLowerCase());
+}
 
 export async function PATCH(req) {
   const { skillsWanted, skillsOffered, location, bio, portfolioLinks } =
@@ -13,8 +17,12 @@ export async function PATCH(req) {
       });
     }
 
-    user.skillsWanted = skillsWanted || user.skillsWanted;
-    user.skillsOffered = skillsOffered || user.skillsOffered;
+    user.skillsWanted = skillsWanted
+      ? normalizeSkills(skillsWanted)
+      : user.skillsWanted;
+    user.skillsOffered = skillsOffered
+      ? normalizeSkills(skillsOffered)
+      : user.skillsOffered;
     user.location = location || user.location;
     user.bio = bio || user.bio;
     user.portfolioLinks = portfolioLinks || user.portfolioLinks;

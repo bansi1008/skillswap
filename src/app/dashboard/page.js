@@ -37,7 +37,6 @@ export default function Dashboard() {
         setUserData(data.user);
       } catch (err) {
         setError(err.message);
-        router.push("/signin");
       } finally {
         setLoading(false);
       }
