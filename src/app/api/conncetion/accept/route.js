@@ -32,19 +32,6 @@ export async function POST(req) {
         }
       );
     }
-    const recevised = currentuser.connectionRequestsSent.includes(fromUserId);
-    const alreadyConnected = currentuser.connections.includes(fromUserId);
-
-    if (alreadyConnected || recevised) {
-      return new Response(
-        JSON.stringify({
-          message: "Connection request already sent or already connected",
-        }),
-        {
-          status: 400,
-        }
-      );
-    }
 
     currentuser.connections.push(fromUserId);
     senduser.connections.push(currentuser._id);

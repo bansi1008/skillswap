@@ -39,6 +39,30 @@ export default function MatchesTab({ setActiveTab }) {
     setShowProfile(false);
     setSelectedUser(null);
   };
+
+  const handleConnect = async (userId) => {
+    try {
+      const response = await fetch("api/conncetion/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ targetUserId: userId }),
+      });
+      console.log("Sending connection request to user ID:", userId);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Failed to send connection request"
+        );
+      }
+      const data = await response.json();
+      alert(data.message || "Connection request sent successfully!");
+    } catch (err) {
+      console.error("Error sending connection request:", err);
+      alert(err.message || "Failed to send connection request");
+    }
+  };
   const fetchMatches = async () => {
     try {
       setIsLoading(true);
@@ -180,7 +204,12 @@ export default function MatchesTab({ setActiveTab }) {
             </div>
 
             <div className={styles.matchActions}>
-              <button className={styles.connectButton}>🤝 Connect</button>
+              <button
+                className={styles.connectButton}
+                onClick={() => handleConnect(match._id || match.id)}
+              >
+                🤝 Connect
+              </button>
               <button
                 className={styles.viewProfileButton}
                 onClick={() => fetchUserProfile(match._id || match.id)}

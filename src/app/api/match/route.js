@@ -17,8 +17,12 @@ export async function GET(req) {
     const { _id, skillsWanted = [], skillsOffered = [] } = currentuser;
     const potentialMatches = await User.find({
       _id: { $ne: _id },
-      skillsOffered: { $in: skillsWanted },
+      $or: [
+        { skillsOffered: { $in: skillsWanted } },
+        { skillsWanted: { $in: skillsOffered } },
+      ],
     });
+
     const matchwiths = potentialMatches.map((user) => {
       const matchSkills = user.skillsOffered.filter((skill) =>
         skillsWanted.includes(skill)
