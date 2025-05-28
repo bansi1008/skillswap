@@ -32,7 +32,7 @@ export default function DashboardStats({ userData }) {
         <div className={styles.statCard}>
           <div className={styles.statIcon}>🤝</div>
           <div className={styles.statContent}>
-            <h3 className={styles.statNumber}>0</h3>
+            <h3 className={styles.statNumber}>{userData.connections.length}</h3>
             <p className={styles.statLabel}>Connections</p>
           </div>
         </div>

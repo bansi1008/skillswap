@@ -1,6 +1,12 @@
 const User = require("../../../model/user");
 const { connectToDatabase } = require("../../../lib/dbconfig");
 
+// Helper to normalize skills: trim + lowercase
+function normalizeSkills(skills) {
+  if (!Array.isArray(skills)) return [];
+  return skills.map((skill) => skill.trim().toLowerCase());
+}
+
 export async function POST(request) {
   const {
     name,
@@ -21,6 +27,7 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return new Response(
@@ -34,11 +41,17 @@ export async function POST(request) {
     }
 
     if (password !== confirmPassword) {
-      return Response.json(
-        { message: "Password and confirm password do not match." },
+      return new Response(
+        JSON.stringify({
+          message: "Password and confirm password do not match.",
+        }),
         { status: 400 }
       );
     }
+
+    // Normalize skillsWanted and skillsOffered before saving
+    const normalizedSkillsWanted = normalizeSkills(skillsWanted);
+    const normalizedSkillsOffered = normalizeSkills(skillsOffered);
 
     const newUser = new User({
       name,
@@ -46,8 +59,8 @@ export async function POST(request) {
       password,
       confirmPassword,
       location,
-      skillsWanted,
-      skillsOffered,
+      skillsWanted: normalizedSkillsWanted,
+      skillsOffered: normalizedSkillsOffered,
     });
 
     await newUser.save();
