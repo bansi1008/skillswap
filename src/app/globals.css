@@ -43,6 +43,27 @@ body {
   overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+  -webkit-touch-callout: none; /* Disable callout on iOS */
+  -webkit-user-select: none; /* Disable text selection */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for specific elements */
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 body {
@@ -51,6 +72,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px; /* Ensure base font size for accessibility */
+  line-height: 1.5;
 }
 
 * {
@@ -80,10 +103,63 @@ input,
 textarea,
 select {
   font-family: inherit;
+  font-size: inherit;
 }
 
 button {
   cursor: pointer;
+  /* Ensure buttons are touch-friendly */
+  min-height: 44px;
+  min-width: 44px;
+  border: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Touch-friendly form elements */
+input,
+textarea,
+select {
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 16px; /* Prevent zoom on iOS */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Ensure proper spacing between touch targets */
+  button + button,
+  a + a,
+  .interactive-element + .interactive-element {
+    margin-left: 8px;
+  }
+
+  /* Improve scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Larger tap targets for small elements */
+  [role="button"],
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    min-height: 48px;
+    min-width: 48px;
+  }
 }
 
 /* Custom scrollbar */
@@ -121,21 +197,46 @@ button {
   padding: 0 1rem;
 }
 
+/* Mobile-first responsive typography */
+h1 {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  line-height: 1.4;
+}
+
+p {
+  font-size: clamp(0.95rem, 2vw, 1rem);
+  line-height: 1.6;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1.5rem;
   }
 
-  h1 {
-    font-size: 2.25rem;
+  /* Improved spacing for mobile */
+  section {
+    margin-bottom: 2rem;
   }
 
-  h2 {
-    font-size: 1.75rem;
+  /* Better button spacing on mobile */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  h3 {
-    font-size: 1.5rem;
+  .button-group > * {
+    width: 100%;
   }
 }
 
@@ -144,26 +245,68 @@ button {
     padding: 0 1rem;
   }
 
-  h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-  }
-
-  p {
-    font-size: 0.95rem;
-  }
-
   /* Hide scrollbar on mobile but allow scrolling */
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
+  }
+
+  /* Ensure proper touch targets */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 48px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Better form layouts on small screens */
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row > * {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Landscape mode optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+  .container {
+    padding: 0 2rem;
+  }
+
+  /* Adjust header height in landscape */
+  .header {
+    min-height: 60px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp text on retina displays */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

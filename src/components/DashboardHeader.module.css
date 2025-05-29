@@ -41,6 +41,10 @@
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+  min-height: 44px; /* Touch-friendly minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navButton:hover {
@@ -92,6 +96,10 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.3s ease;
+  min-height: 44px; /* Touch-friendly minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoutButton:hover {
@@ -100,28 +108,9 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .headerContent {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .nav {
-    order: -1;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .userMenu {
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-
-@media (max-width: 480px) {
-  .headerContent {
-    padding: 0.75rem;
+    padding: 1rem 1.5rem;
   }
 
   .nav {
@@ -129,7 +118,97 @@
   }
 
   .navButton {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .logo {
+    order: 1;
+    flex: 1;
+  }
+
+  .userMenu {
+    order: 2;
+    flex-shrink: 0;
+  }
+
+  .nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .navButton {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .userName {
+    display: none; /* Hide username on mobile to save space */
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContent {
+    padding: 0.75rem 1rem;
+  }
+
+  .logoText {
+    font-size: 1.25rem;
+  }
+
+  .userAvatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .logoutButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .nav {
+    gap: 0.25rem;
+  }
+
+  .navButton {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+    min-height: 40px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .headerContent {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .nav {
+    order: 2;
+    width: auto;
+    flex: 1;
+    margin: 0 1rem;
+    justify-content: center;
+  }
+
+  .userMenu {
+    order: 3;
   }
 }

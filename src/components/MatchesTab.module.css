@@ -485,6 +485,18 @@
     left: 1rem;
     max-width: none;
     min-width: auto;
+    z-index: 2001;
+  }
+
+  .notificationContent {
+    padding: 1rem 1.25rem;
+  }
+
+  .notificationClose {
+    min-width: 44px;
+    min-height: 44px;
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -501,5 +513,27 @@
 
   .notificationMessage {
     font-size: 0.9rem;
+  }
+
+  .notificationIcon {
+    font-size: 1.1rem;
+  }
+}
+
+/* Ensure notifications don't interfere with fixed headers */
+@media (max-width: 768px) {
+  .notification {
+    top: 80px;
+  }
+}
+
+/* Safe area insets for iOS devices with notches */
+@supports (top: env(safe-area-inset-top)) {
+  @media (max-width: 768px) {
+    .notification {
+      top: calc(env(safe-area-inset-top) + 1rem);
+      left: calc(env(safe-area-inset-left) + 1rem);
+      right: calc(env(safe-area-inset-right) + 1rem);
+    }
   }
 }
