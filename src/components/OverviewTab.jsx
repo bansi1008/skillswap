@@ -1,4 +1,5 @@
 import styles from "./OverviewTab.module.css";
+import Allconnectionmodel from "./Allconnectionmodel";
 import { useState } from "react";
 
 export default function OverviewTab({ userData, onProfileUpdate }) {
@@ -8,10 +9,12 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
     bio: userData.bio || "",
     portfolioLinks: userData.portfolioLinks || [],
   });
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showInvitationsModal, setShowInvitationsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [ActiveTab, setActiveTab] = useState(false);
+  const [user, setuser] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,7 +59,7 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
       });
 
       if (response.ok) {
-        setIsFormVisible(false);
+        setShowEditModal(false);
         if (onProfileUpdate) {
           onProfileUpdate();
         }
@@ -73,11 +76,36 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
     }
   };
 
+  const handleconnection = async () => {
+    try {
+      const response = await fetch("/api/conncetion/allconnection");
+      if (!response.ok) {
+        console.log("Failed to fetch connections");
+        throw new Error("Failed to fetch connections");
+      }
+      const data = await response.json();
+      const alluser = data.users;
+
+      if (alluser && alluser.length > 0) {
+        setuser(alluser);
+        setActiveTab(true);
+      } else {
+        alert("No connections found.");
+        setActiveTab(false);
+        setuser(null);
+      }
+    } catch (error) {
+      console.error("Error fetching connections:", error);
+      alert("Failed to fetch connections. Please try again later.");
+    } finally {
+    }
+  };
+
   const handleinvitatin = async () => {
     try {
       setIsLoading(true);
-      // Close the form if it's open
-      setIsFormVisible(false);
+      // Close the edit modal if it's open
+      setShowEditModal(false);
 
       const response = await fetch("/api/conncetion/allrequest");
       if (!response.ok) {
@@ -86,17 +114,17 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
       const data = await response.json();
       const users = data.users;
       if (data.users && data.users.length > 0) {
-        setShowProfile(true);
+        setShowInvitationsModal(true);
         setSelectedUser(users);
       } else {
         alert("No connection requests found.");
-        setShowProfile(false);
+        setShowInvitationsModal(false);
         setSelectedUser(null);
       }
     } catch (error) {
       console.error("Error fetching connection requests:", error);
       alert("Failed to fetch connection requests. Please try again later.");
-      setShowProfile(false);
+      setShowInvitationsModal(false);
       setSelectedUser(null);
     } finally {
       setIsLoading(false);
@@ -156,9 +184,9 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
   };
 
   const toggleForm = () => {
-    if (!isFormVisible) {
+    if (!showEditModal) {
       // Close invitations if they're open
-      setShowProfile(false);
+      setShowInvitationsModal(false);
       setSelectedUser(null);
 
       // Reset form when opening
@@ -169,8 +197,18 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
         portfolioLinks: userData.portfolioLinks || [],
       });
     }
-    setIsFormVisible(!isFormVisible);
+    setShowEditModal(!showEditModal);
   };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+  };
+
+  const closeInvitationsModal = () => {
+    setShowInvitationsModal(false);
+    setSelectedUser(null);
+  };
+
   return (
     <div className={styles.overviewContent}>
       <div className={styles.contentGrid}>
@@ -238,9 +276,9 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
           <div className={styles.actionButtons}>
             <button className={styles.actionButton} onClick={toggleForm}>
               <span className={styles.actionIcon}>📝</span>
-              {isFormVisible ? "Cancel Edit" : "Update Profile"}
+              {showEditModal ? "Cancel Edit" : "Update Profile"}
             </button>
-            <button className={styles.actionButton}>
+            <button className={styles.actionButton} onClick={handleconnection}>
               <span className={styles.actionIcon}> 👥 </span>
               My connection
             </button>
@@ -250,246 +288,280 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
             </button>
           </div>
         </div>
-        {/* Show Profile */}
-        {showProfile && (
-          <div className={styles.invitationsSection}>
-            <div className={styles.invitationsHeader}>
-              <h2 className={styles.sectionTitle}>Connection Requests</h2>
-              <div className={styles.headerActions}>
-                <div className={styles.invitationsCount}>
-                  {selectedUser.length}{" "}
-                  {selectedUser.length === 1 ? "request" : "requests"}
+
+        {/* Invitations Modal */}
+        {showInvitationsModal && selectedUser && (
+          <div className={styles.modalOverlay} onClick={closeInvitationsModal}>
+            <div
+              className={styles.modalContent}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>Connection Requests</h2>
+                <div className={styles.headerActions}>
+                  <div className={styles.invitationsCount}>
+                    {selectedUser.length}{" "}
+                    {selectedUser.length === 1 ? "request" : "requests"}
+                  </div>
+                  <button
+                    className={styles.closeButton}
+                    onClick={closeInvitationsModal}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button
-                  className={styles.closeInvitationsButton}
-                  onClick={() => {
-                    setShowProfile(false);
-                    setSelectedUser(null);
-                  }}
-                >
+              </div>
+
+              <div className={styles.modalBody}>
+                <div className={styles.invitationsGrid}>
+                  {selectedUser.map((user) => (
+                    <div key={user._id} className={styles.invitationCard}>
+                      {/* User Header */}
+                      <div className={styles.invitationHeader}>
+                        <div className={styles.userAvatar}>
+                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                        </div>
+                        <div className={styles.userBasicInfo}>
+                          <h3 className={styles.invitationUserName}>
+                            {user.name || "Unknown User"}
+                          </h3>
+                          {user.location && (
+                            <p className={styles.invitationUserLocation}>
+                              📍 {user.location}
+                            </p>
+                          )}
+                          <div className={styles.connectionsCount}>
+                            👥 {user.connections ? user.connections.length : 0}{" "}
+                            connections
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bio Section */}
+                      {user.bio && (
+                        <div className={styles.invitationSection}>
+                          <h4 className={styles.invitationSectionTitle}>
+                            About
+                          </h4>
+                          <p className={styles.invitationBio}>{user.bio}</p>
+                        </div>
+                      )}
+
+                      {/* Skills Offered */}
+                      {user.skillsOffered && user.skillsOffered.length > 0 && (
+                        <div className={styles.invitationSection}>
+                          <h4 className={styles.invitationSectionTitle}>
+                            💡 Skills They Offer
+                          </h4>
+                          <div className={styles.invitationSkillsTags}>
+                            {user.skillsOffered.map((skill, index) => (
+                              <span
+                                key={index}
+                                className={styles.invitationSkillTag}
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Skills Wanted */}
+                      {user.skillsWanted && user.skillsWanted.length > 0 && (
+                        <div className={styles.invitationSection}>
+                          <h4 className={styles.invitationSectionTitle}>
+                            🎯 Skills They Want
+                          </h4>
+                          <div className={styles.invitationSkillsTags}>
+                            {user.skillsWanted.map((skill, index) => (
+                              <span
+                                key={index}
+                                className={styles.invitationSkillTag}
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Portfolio Links */}
+                      {user.portfolioLinks &&
+                        user.portfolioLinks.length > 0 && (
+                          <div className={styles.invitationSection}>
+                            <h4 className={styles.invitationSectionTitle}>
+                              🔗 Portfolio
+                            </h4>
+                            <div className={styles.invitationPortfolioLinks}>
+                              {user.portfolioLinks.map((link, index) => (
+                                <a
+                                  key={index}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={styles.invitationPortfolioLink}
+                                >
+                                  {link.name}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Action Buttons */}
+                      <div className={styles.invitationActions}>
+                        <button
+                          className={styles.acceptButton}
+                          onClick={() => handleAcceptInvitation(user._id)}
+                        >
+                          ✅ Accept
+                        </button>
+                        <button
+                          className={styles.rejectButton}
+                          onClick={() => handleRejectInvitation(user._id)}
+                        >
+                          ❌ Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/*all connections modal
+         */}
+
+        {/* Profile Update Modal */}
+        {showEditModal && (
+          <div className={styles.modalOverlay} onClick={closeEditModal}>
+            <div
+              className={styles.modalContent}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>Update Profile</h2>
+                <button className={styles.closeButton} onClick={closeEditModal}>
                   ✕
                 </button>
               </div>
-            </div>
 
-            <div className={styles.invitationsGrid}>
-              {selectedUser.map((user) => (
-                <div key={user._id} className={styles.invitationCard}>
-                  {/* User Header */}
-                  <div className={styles.invitationHeader}>
-                    <div className={styles.userAvatar}>
-                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                    <div className={styles.userBasicInfo}>
-                      <h3 className={styles.invitationUserName}>
-                        {user.name || "Unknown User"}
-                      </h3>
-                      {user.location && (
-                        <p className={styles.invitationUserLocation}>
-                          📍 {user.location}
-                        </p>
-                      )}
-                      <div className={styles.connectionsCount}>
-                        👥 {user.connections ? user.connections.length : 0}{" "}
-                        connections
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bio Section */}
-                  {user.bio && (
-                    <div className={styles.invitationSection}>
-                      <h4 className={styles.invitationSectionTitle}>About</h4>
-                      <p className={styles.invitationBio}>{user.bio}</p>
-                    </div>
-                  )}
-
-                  {/* Skills Offered */}
-                  {user.skillsOffered && user.skillsOffered.length > 0 && (
-                    <div className={styles.invitationSection}>
-                      <h4 className={styles.invitationSectionTitle}>
-                        💡 Skills They Offer
-                      </h4>
-                      <div className={styles.invitationSkillsTags}>
-                        {user.skillsOffered.map((skill, index) => (
-                          <span
-                            key={index}
-                            className={styles.invitationSkillTag}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Skills Wanted */}
-                  {user.skillsWanted && user.skillsWanted.length > 0 && (
-                    <div className={styles.invitationSection}>
-                      <h4 className={styles.invitationSectionTitle}>
-                        🎯 Skills They Want
-                      </h4>
-                      <div className={styles.invitationSkillsTags}>
-                        {user.skillsWanted.map((skill, index) => (
-                          <span
-                            key={index}
-                            className={styles.invitationSkillTag}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Portfolio Links */}
-                  {user.portfolioLinks && user.portfolioLinks.length > 0 && (
-                    <div className={styles.invitationSection}>
-                      <h4 className={styles.invitationSectionTitle}>
-                        🔗 Portfolio
-                      </h4>
-                      <div className={styles.invitationPortfolioLinks}>
-                        {user.portfolioLinks.map((link, index) => (
-                          <a
-                            key={index}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.invitationPortfolioLink}
-                          >
-                            {link.name}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className={styles.invitationActions}>
-                    <button
-                      className={styles.acceptButton}
-                      onClick={() => handleAcceptInvitation(user._id)}
-                    >
-                      ✅ Accept
-                    </button>
-                    <button
-                      className={styles.rejectButton}
-                      onClick={() => handleRejectInvitation(user._id)}
-                    >
-                      ❌ Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Profile Update Form */}
-        {isFormVisible && (
-          <div className={styles.formCard}>
-            <h2 className={styles.cardTitle}>Update Profile</h2>
-            <form onSubmit={handleSubmit} className={styles.profileForm}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Name:</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  disabled
-                  title="Name cannot be changed"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Location:</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={form.location}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  placeholder="Enter your location"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Bio:</label>
-                <textarea
-                  name="bio"
-                  value={form.bio}
-                  onChange={handleInputChange}
-                  className={styles.formTextarea}
-                  placeholder="Tell others about yourself"
-                  rows="4"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.portfolioHeader}>
-                  <label className={styles.formLabel}>Portfolio Links:</label>
-                  <button
-                    type="button"
-                    onClick={addPortfolioLink}
-                    className={styles.addButton}
-                  >
-                    + Add Link
-                  </button>
-                </div>
-
-                {form.portfolioLinks.map((link, index) => (
-                  <div key={index} className={styles.portfolioLinkForm}>
+              <div className={styles.modalBody}>
+                <form onSubmit={handleSubmit} className={styles.profileForm}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Name:</label>
                     <input
                       type="text"
-                      value={link.name}
-                      onChange={(e) =>
-                        handlePortfolioLinkChange(index, "name", e.target.value)
-                      }
-                      placeholder="Link name (e.g., GitHub, Portfolio)"
+                      name="name"
+                      value={form.name}
+                      onChange={handleInputChange}
                       className={styles.formInput}
+                      disabled
+                      title="Name cannot be changed"
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Location:</label>
                     <input
-                      type="url"
-                      value={link.url}
-                      onChange={(e) =>
-                        handlePortfolioLinkChange(index, "url", e.target.value)
-                      }
-                      placeholder="https://example.com"
+                      type="text"
+                      name="location"
+                      value={form.location}
+                      onChange={handleInputChange}
                       className={styles.formInput}
+                      placeholder="Enter your location"
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Bio:</label>
+                    <textarea
+                      name="bio"
+                      value={form.bio}
+                      onChange={handleInputChange}
+                      className={styles.formTextarea}
+                      placeholder="Tell others about yourself"
+                      rows="4"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <div className={styles.portfolioHeader}>
+                      <label className={styles.formLabel}>
+                        Portfolio Links:
+                      </label>
+                      <button
+                        type="button"
+                        onClick={addPortfolioLink}
+                        className={styles.addButton}
+                      >
+                        + Add Link
+                      </button>
+                    </div>
+
+                    {form.portfolioLinks.map((link, index) => (
+                      <div key={index} className={styles.portfolioLinkForm}>
+                        <input
+                          type="text"
+                          value={link.name}
+                          onChange={(e) =>
+                            handlePortfolioLinkChange(
+                              index,
+                              "name",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Link name (e.g., GitHub, Portfolio)"
+                          className={styles.formInput}
+                        />
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) =>
+                            handlePortfolioLinkChange(
+                              index,
+                              "url",
+                              e.target.value
+                            )
+                          }
+                          placeholder="https://example.com"
+                          className={styles.formInput}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePortfolioLink(index)}
+                          className={styles.removeButton}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className={styles.formActions}>
+                    <button
+                      type="submit"
+                      className={styles.submitButton}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Updating..." : "Update Profile"}
+                    </button>
                     <button
                       type="button"
-                      onClick={() => removePortfolioLink(index)}
-                      className={styles.removeButton}
+                      onClick={closeEditModal}
+                      className={styles.cancelButton}
                     >
-                      🗑️
+                      Cancel
                     </button>
                   </div>
-                ))}
+                </form>
               </div>
-
-              <div className={styles.formActions}>
-                <button
-                  type="submit"
-                  className={styles.submitButton}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Updating..." : "Update Profile"}
-                </button>
-                <button
-                  type="button"
-                  onClick={toggleForm}
-                  className={styles.cancelButton}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         )}
       </div>
+      <Allconnectionmodel ActiveTab={ActiveTab} user={user} />
     </div>
   );
 }
