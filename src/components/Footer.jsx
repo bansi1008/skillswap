@@ -52,22 +52,22 @@ const Footer = () => {
               <h3 className={styles.linkTitle}>Platform</h3>
               <ul className={styles.linkList}>
                 <li>
-                  <Link href="/find-skills" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Find Skills
                   </Link>
                 </li>
                 <li>
-                  <Link href="/offer-skills" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Offer Skills
                   </Link>
                 </li>
                 <li>
-                  <Link href="/how-it-works" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     How It Works
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pricing" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Pricing
                   </Link>
                 </li>
@@ -83,17 +83,17 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/careers" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Careers
                   </Link>
                 </li>
                 <li>
-                  <Link href="/blog" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <Link href="/press" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Press
                   </Link>
                 </li>
@@ -104,22 +104,22 @@ const Footer = () => {
               <h3 className={styles.linkTitle}>Support</h3>
               <ul className={styles.linkList}>
                 <li>
-                  <Link href="/help" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Help Center
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Contact Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/community" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Community
                   </Link>
                 </li>
                 <li>
-                  <Link href="/feedback" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Feedback
                   </Link>
                 </li>
@@ -130,22 +130,22 @@ const Footer = () => {
               <h3 className={styles.linkTitle}>Legal</h3>
               <ul className={styles.linkList}>
                 <li>
-                  <Link href="/terms" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Terms of Service
                   </Link>
                 </li>
                 <li>
-                  <Link href="/privacy" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cookies" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Cookie Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/safety" className={styles.link}>
+                  <Link href="/signin" className={styles.link}>
                     Safety Tips
                   </Link>
                 </li>
