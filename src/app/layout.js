@@ -19,6 +19,15 @@ export const metadata = {
     "skill exchange",
   ],
   authors: [{ name: "Bansi Dobariya" }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "SkillSwap - Connect, Learn & Share Skills",
+    description: "Join our skill-sharing community to connect, learn and teach",
+    type: "website",
+  },
 };
 
 export const viewport = {
