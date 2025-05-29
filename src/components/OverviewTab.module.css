@@ -115,17 +115,7 @@
   font-size: 1.5rem;
 }
 
-/* Form Styles */
-.formCard {
-  grid-column: 1 / -1;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  margin-top: 2rem;
-}
-
+/* Form Styles - Now used in Modal */
 .profileForm {
   display: flex;
   flex-direction: column;
@@ -292,19 +282,22 @@
 
 @media (max-width: 768px) {
   .profileCard,
-  .actionsCard,
-  .formCard {
+  .actionsCard {
+    padding: 1.5rem;
+  }
+
+  .modalContent {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .modalHeader,
+  .modalBody {
     padding: 1.5rem;
   }
 
   .invitationsGrid {
     grid-template-columns: 1fr;
-  }
-
-  .invitationsHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
   }
 
   .headerActions {
@@ -325,14 +318,22 @@
 
 @media (max-width: 480px) {
   .profileCard,
-  .actionsCard,
-  .formCard {
+  .actionsCard {
     padding: 1.25rem;
+  }
+
+  .modalOverlay {
+    padding: 0.5rem;
+  }
+
+  .modalHeader,
+  .modalBody {
+    padding: 1rem;
   }
 
   .cardTitle,
   .pageTitle,
-  .sectionTitle {
+  .modalTitle {
     font-size: 1.25rem;
   }
 
@@ -380,52 +381,17 @@
   }
 }
 
-/* Invitations Section */
-.invitationsSection {
-  grid-column: 1 / -1;
-  margin-top: 2rem;
-}
-
-.invitationsHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+/* Invitations Section - Now used in Modal */
+.invitationsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
 }
 
 .headerActions {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.closeInvitationsButton {
-  background: rgba(244, 67, 54, 0.2);
-  border: 1px solid rgba(244, 67, 54, 0.4);
-  color: #ff6b6b;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.closeInvitationsButton:hover {
-  background: rgba(244, 67, 54, 0.3);
-  border-color: rgba(244, 67, 54, 0.6);
-  transform: scale(1.05);
-}
-
-.sectionTitle {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: white;
-  margin: 0;
 }
 
 .invitationsCount {
@@ -436,13 +402,6 @@
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
-}
-
-/* Invitations Grid */
-.invitationsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 2rem;
 }
 
 /* Invitation Card */
@@ -635,4 +594,111 @@
   border-color: rgba(244, 67, 54, 0.6);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(244, 67, 54, 0.2);
+}
+
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* Modal Content */
+.modalContent {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Header */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.closeButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.4);
+  color: #ff6b6b;
+}
+
+/* Modal Body */
+.modalBody {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Custom Scrollbar for Modal */
+.modalBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalBody::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.modalBody::-webkit-scrollbar-thumb {
+  background: rgba(79, 195, 247, 0.5);
+  border-radius: 3px;
+}
+
+.modalBody::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 195, 247, 0.7);
 }

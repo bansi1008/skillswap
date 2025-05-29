@@ -17,7 +17,7 @@ export default function MatchesTab({ setActiveTab }) {
   const fetchUserProfile = async (userId) => {
     try {
       setProfileLoading(true);
-      console.log("Fetching user profile for ID:", userId);
+
       const response = await fetch(`/api/oneuser/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch user profile");
