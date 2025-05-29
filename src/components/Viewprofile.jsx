@@ -1,6 +1,12 @@
 import styles from "./ViewProfile.module.css";
+import React from "react";
 
-export default function ViewProfile({ user, onClose, handleConnect, match }) {
+const ViewProfile = React.memo(function ViewProfile({
+  user,
+  onClose,
+  handleConnect,
+  match,
+}) {
   if (!user) return null;
 
   return (
@@ -109,4 +115,5 @@ export default function ViewProfile({ user, onClose, handleConnect, match }) {
       </div>
     </div>
   );
-}
+});
+export default ViewProfile;
