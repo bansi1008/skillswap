@@ -32,7 +32,6 @@ export default function SignInPage() {
   const { mutate } = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
-      alert("Login successful!");
       router.push("/dashboard");
     },
     onError: (error) => {
