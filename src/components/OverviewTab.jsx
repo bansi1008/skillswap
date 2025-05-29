@@ -1,6 +1,6 @@
 import styles from "./OverviewTab.module.css";
 import Allconnectionmodel from "./Allconnectionmodel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function OverviewTab({ userData, onProfileUpdate }) {
   const [form, setForm] = useState({
@@ -15,6 +15,40 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [ActiveTab, setActiveTab] = useState(false);
   const [user, setuser] = useState(null);
+  const [connectionCount, setConnectionCount] = useState(0);
+  const [invitationCount, setInvitationCount] = useState(0);
+
+  // Fetch counts when component mounts
+  useEffect(() => {
+    fetchConnectionCount();
+    fetchInvitationCount();
+  }, []);
+
+  const fetchConnectionCount = async () => {
+    try {
+      const response = await fetch("/api/conncetion/allconnection");
+      if (response.ok) {
+        const data = await response.json();
+        const alluser = data.users;
+        setConnectionCount(alluser ? alluser.length : 0);
+      }
+    } catch (error) {
+      console.error("Error fetching connection count:", error);
+    }
+  };
+
+  const fetchInvitationCount = async () => {
+    try {
+      const response = await fetch("/api/conncetion/allrequest");
+      if (response.ok) {
+        const data = await response.json();
+        const users = data.users;
+        setInvitationCount(users ? users.length : 0);
+      }
+    } catch (error) {
+      console.error("Error fetching invitation count:", error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,14 +120,9 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
       const data = await response.json();
       const alluser = data.users;
 
-      if (alluser && alluser.length > 0) {
-        setuser(alluser);
-        setActiveTab(true);
-      } else {
-        alert("No connections found.");
-        setActiveTab(false);
-        setuser(null);
-      }
+      // Always open the modal - let AllConnectionModel handle empty state
+      setuser(alluser || []);
+      setActiveTab(true);
     } catch (error) {
       console.error("Error fetching connections:", error);
       alert("Failed to fetch connections. Please try again later.");
@@ -113,14 +142,10 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
       }
       const data = await response.json();
       const users = data.users;
-      if (data.users && data.users.length > 0) {
-        setShowInvitationsModal(true);
-        setSelectedUser(users);
-      } else {
-        alert("No connection requests found.");
-        setShowInvitationsModal(false);
-        setSelectedUser(null);
-      }
+
+      // Always show the modal - let it handle empty state
+      setShowInvitationsModal(true);
+      setSelectedUser(users || []);
     } catch (error) {
       console.error("Error fetching connection requests:", error);
       alert("Failed to fetch connection requests. Please try again later.");
@@ -147,7 +172,10 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
       }
 
       const data = await response.json();
-      alert(data.message || "Connection request accepted successfully!");
+
+      // Refresh both counts since accepting creates a connection and removes an invitation
+      fetchConnectionCount();
+      fetchInvitationCount();
 
       // Refresh the invitations list
       handleinvitatin();
@@ -174,6 +202,9 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
 
       const data = await response.json();
       alert(data.message || "Connection request rejected successfully!");
+
+      // Refresh invitation count since rejecting removes an invitation
+      fetchInvitationCount();
 
       // Refresh the invitations list
       handleinvitatin();
@@ -275,16 +306,28 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
           <h2 className={styles.cardTitle}>Quick Actions</h2>
           <div className={styles.actionButtons}>
             <button className={styles.actionButton} onClick={toggleForm}>
-              <span className={styles.actionIcon}>📝</span>
-              {showEditModal ? "Cancel Edit" : "Update Profile"}
+              <div className={styles.actionButtonContent}>
+                <span className={styles.actionIcon}>📝</span>
+                {showEditModal ? "Cancel Edit" : "Update Profile"}
+              </div>
             </button>
             <button className={styles.actionButton} onClick={handleconnection}>
-              <span className={styles.actionIcon}> 👥 </span>
-              My connection
+              <div className={styles.actionButtonContent}>
+                <span className={styles.actionIcon}>👥</span>
+                My connection
+                {connectionCount > 0 && (
+                  <span className={styles.badge}>{connectionCount}</span>
+                )}
+              </div>
             </button>
             <button className={styles.actionButton} onClick={handleinvitatin}>
-              <span className={styles.actionIcon}>📨</span>
-              {isLoading ? "Loading..." : "Invitations"}
+              <div className={styles.actionButtonContent}>
+                <span className={styles.actionIcon}>📨</span>
+                {isLoading ? "Loading..." : "Invitations"}
+                {invitationCount > 0 && (
+                  <span className={styles.badge}>{invitationCount}</span>
+                )}
+              </div>
             </button>
           </div>
         </div>
@@ -313,119 +356,134 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
               </div>
 
               <div className={styles.modalBody}>
-                <div className={styles.invitationsGrid}>
-                  {selectedUser.map((user) => (
-                    <div key={user._id} className={styles.invitationCard}>
-                      {/* User Header */}
-                      <div className={styles.invitationHeader}>
-                        <div className={styles.userAvatar}>
-                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                        </div>
-                        <div className={styles.userBasicInfo}>
-                          <h3 className={styles.invitationUserName}>
-                            {user.name || "Unknown User"}
-                          </h3>
-                          {user.location && (
-                            <p className={styles.invitationUserLocation}>
-                              📍 {user.location}
-                            </p>
-                          )}
-                          <div className={styles.connectionsCount}>
-                            👥 {user.connections ? user.connections.length : 0}{" "}
-                            connections
+                {selectedUser.length === 0 ? (
+                  <div className={styles.emptyInvitations}>
+                    <div className={styles.emptyIcon}>📨</div>
+                    <h3>No connection requests</h3>
+                    <p>
+                      You don't have any pending connection requests at the
+                      moment.
+                    </p>
+                  </div>
+                ) : (
+                  <div className={styles.invitationsGrid}>
+                    {selectedUser.map((user) => (
+                      <div key={user._id} className={styles.invitationCard}>
+                        {/* User Header */}
+                        <div className={styles.invitationHeader}>
+                          <div className={styles.userAvatar}>
+                            {user.name
+                              ? user.name.charAt(0).toUpperCase()
+                              : "U"}
+                          </div>
+                          <div className={styles.userBasicInfo}>
+                            <h3 className={styles.invitationUserName}>
+                              {user.name || "Unknown User"}
+                            </h3>
+                            {user.location && (
+                              <p className={styles.invitationUserLocation}>
+                                📍 {user.location}
+                              </p>
+                            )}
+                            <div className={styles.connectionsCount}>
+                              👥{" "}
+                              {user.connections ? user.connections.length : 0}{" "}
+                              connections
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Bio Section */}
-                      {user.bio && (
-                        <div className={styles.invitationSection}>
-                          <h4 className={styles.invitationSectionTitle}>
-                            About
-                          </h4>
-                          <p className={styles.invitationBio}>{user.bio}</p>
-                        </div>
-                      )}
-
-                      {/* Skills Offered */}
-                      {user.skillsOffered && user.skillsOffered.length > 0 && (
-                        <div className={styles.invitationSection}>
-                          <h4 className={styles.invitationSectionTitle}>
-                            💡 Skills They Offer
-                          </h4>
-                          <div className={styles.invitationSkillsTags}>
-                            {user.skillsOffered.map((skill, index) => (
-                              <span
-                                key={index}
-                                className={styles.invitationSkillTag}
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Skills Wanted */}
-                      {user.skillsWanted && user.skillsWanted.length > 0 && (
-                        <div className={styles.invitationSection}>
-                          <h4 className={styles.invitationSectionTitle}>
-                            🎯 Skills They Want
-                          </h4>
-                          <div className={styles.invitationSkillsTags}>
-                            {user.skillsWanted.map((skill, index) => (
-                              <span
-                                key={index}
-                                className={styles.invitationSkillTag}
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Portfolio Links */}
-                      {user.portfolioLinks &&
-                        user.portfolioLinks.length > 0 && (
+                        {/* Bio Section */}
+                        {user.bio && (
                           <div className={styles.invitationSection}>
                             <h4 className={styles.invitationSectionTitle}>
-                              🔗 Portfolio
+                              About
                             </h4>
-                            <div className={styles.invitationPortfolioLinks}>
-                              {user.portfolioLinks.map((link, index) => (
-                                <a
+                            <p className={styles.invitationBio}>{user.bio}</p>
+                          </div>
+                        )}
+
+                        {/* Skills Offered */}
+                        {user.skillsOffered &&
+                          user.skillsOffered.length > 0 && (
+                            <div className={styles.invitationSection}>
+                              <h4 className={styles.invitationSectionTitle}>
+                                💡 Skills They Offer
+                              </h4>
+                              <div className={styles.invitationSkillsTags}>
+                                {user.skillsOffered.map((skill, index) => (
+                                  <span
+                                    key={index}
+                                    className={styles.invitationSkillTag}
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                        {/* Skills Wanted */}
+                        {user.skillsWanted && user.skillsWanted.length > 0 && (
+                          <div className={styles.invitationSection}>
+                            <h4 className={styles.invitationSectionTitle}>
+                              🎯 Skills They Want
+                            </h4>
+                            <div className={styles.invitationSkillsTags}>
+                              {user.skillsWanted.map((skill, index) => (
+                                <span
                                   key={index}
-                                  href={link.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={styles.invitationPortfolioLink}
+                                  className={styles.invitationSkillTag}
                                 >
-                                  {link.name}
-                                </a>
+                                  {skill}
+                                </span>
                               ))}
                             </div>
                           </div>
                         )}
 
-                      {/* Action Buttons */}
-                      <div className={styles.invitationActions}>
-                        <button
-                          className={styles.acceptButton}
-                          onClick={() => handleAcceptInvitation(user._id)}
-                        >
-                          ✅ Accept
-                        </button>
-                        <button
-                          className={styles.rejectButton}
-                          onClick={() => handleRejectInvitation(user._id)}
-                        >
-                          ❌ Reject
-                        </button>
+                        {/* Portfolio Links */}
+                        {user.portfolioLinks &&
+                          user.portfolioLinks.length > 0 && (
+                            <div className={styles.invitationSection}>
+                              <h4 className={styles.invitationSectionTitle}>
+                                🔗 Portfolio
+                              </h4>
+                              <div className={styles.invitationPortfolioLinks}>
+                                {user.portfolioLinks.map((link, index) => (
+                                  <a
+                                    key={index}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.invitationPortfolioLink}
+                                  >
+                                    {link.name}
+                                  </a>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                        {/* Action Buttons */}
+                        <div className={styles.invitationActions}>
+                          <button
+                            className={styles.acceptButton}
+                            onClick={() => handleAcceptInvitation(user._id)}
+                          >
+                            ✅ Accept
+                          </button>
+                          <button
+                            className={styles.rejectButton}
+                            onClick={() => handleRejectInvitation(user._id)}
+                          >
+                            ❌ Reject
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

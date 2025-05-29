@@ -9,10 +9,29 @@ export default function MatchesTab({ setActiveTab }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     fetchMatches();
   }, []);
+
+  // Auto-dismiss notification after 4 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
+
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+  };
+
+  const dismissNotification = () => {
+    setNotification(null);
+  };
 
   const fetchUserProfile = async (userId) => {
     try {
@@ -29,7 +48,7 @@ export default function MatchesTab({ setActiveTab }) {
       }
     } catch (err) {
       console.error("Error fetching user profile:", err);
-      alert("Failed to load user profile");
+      showNotification("Failed to load user profile", "error");
     } finally {
       setProfileLoading(false);
     }
@@ -57,12 +76,19 @@ export default function MatchesTab({ setActiveTab }) {
         );
       }
       const data = await response.json();
-      alert(data.message || "Connection request sent successfully!");
+      showNotification(
+        data.message || "Connection request sent successfully!",
+        "success"
+      );
     } catch (err) {
       console.error("Error sending connection request:", err);
-      alert(err.message || "Failed to send connection request");
+      showNotification(
+        err.message || "Failed to send connection request",
+        "error"
+      );
     }
   };
+
   const fetchMatches = async () => {
     try {
       setIsLoading(true);
@@ -149,6 +175,30 @@ export default function MatchesTab({ setActiveTab }) {
 
   return (
     <div className={styles.matchesContent}>
+      {/* Notification */}
+      {notification && (
+        <div className={`${styles.notification} ${styles[notification.type]}`}>
+          <div className={styles.notificationContent}>
+            <span className={styles.notificationIcon}>
+              {notification.type === "success"
+                ? "✅"
+                : notification.type === "error"
+                ? "❌"
+                : "ℹ️"}
+            </span>
+            <span className={styles.notificationMessage}>
+              {notification.message}
+            </span>
+            <button
+              className={styles.notificationClose}
+              onClick={dismissNotification}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className={styles.matchesHeader}>
         <h2 className={styles.pageTitle}>Potential Matches</h2>
         <div className={styles.matchesCount}>
@@ -226,7 +276,11 @@ export default function MatchesTab({ setActiveTab }) {
 
       {/* Profile Modal */}
       {showProfile && selectedUser && (
-        <ViewProfile user={selectedUser} onClose={closeProfile} />
+        <ViewProfile
+          user={selectedUser}
+          onClose={closeProfile}
+          handleConnect={handleConnect}
+        />
       )}
     </div>
   );

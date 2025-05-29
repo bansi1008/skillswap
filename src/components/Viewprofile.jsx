@@ -1,6 +1,6 @@
 import styles from "./ViewProfile.module.css";
 
-export default function ViewProfile({ user, onClose }) {
+export default function ViewProfile({ user, onClose, handleConnect, match }) {
   if (!user) return null;
 
   return (
@@ -99,10 +99,12 @@ export default function ViewProfile({ user, onClose }) {
 
         {/* Actions */}
         <div className={styles.modalActions}>
-          <button className={styles.connectButton}>
+          <button
+            className={styles.connectButton}
+            onClick={() => handleConnect(user._id || user.id)}
+          >
             🤝 Send Connection Request
           </button>
-          <button className={styles.messageButton}>💬 Send Message</button>
         </div>
       </div>
     </div>

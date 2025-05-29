@@ -377,3 +377,129 @@
     justify-content: center;
   }
 }
+
+/* Notification System */
+.notification {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 2000;
+  animation: slideInFromRight 0.4s ease-out;
+  max-width: 400px;
+  min-width: 300px;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.notificationContent {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.notificationIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.notificationMessage {
+  color: white;
+  font-weight: 500;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.notificationClose {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.notificationClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* Success Notification */
+.notification.success .notificationContent {
+  border-left: 4px solid #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.notification.success .notificationIcon {
+  color: #4caf50;
+}
+
+/* Error Notification */
+.notification.error .notificationContent {
+  border-left: 4px solid #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.notification.error .notificationIcon {
+  color: #f44336;
+}
+
+/* Info Notification */
+.notification.info .notificationContent {
+  border-left: 4px solid #2196f3;
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.notification.info .notificationIcon {
+  color: #2196f3;
+}
+
+/* Responsive Notifications */
+@media (max-width: 768px) {
+  .notification {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification {
+    top: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .notificationContent {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .notificationMessage {
+    font-size: 0.9rem;
+  }
+}

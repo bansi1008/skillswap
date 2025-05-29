@@ -14,7 +14,9 @@ export async function GET(req) {
     const users = await User.find({
       _id: { $ne: currentuser._id },
       connections: currentuser._id,
-    }).select("-password -connectionRequestsReceived -connectionRequestsSent");
+    }).select(
+      "-password -connectionRequestsReceived -connectionRequestsSent -updatedAt"
+    );
     return new Response(JSON.stringify({ users }), {
       status: 200,
     });
