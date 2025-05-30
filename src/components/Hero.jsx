@@ -87,10 +87,10 @@ const Hero = () => {
             interests become expertise. Find your perfect skill match today!
           </p>
           <div ref={ctaRef} className={styles.ctaButtons}>
-            <Link href="/find-skills" className={styles.primaryButton}>
+            <Link href="/signup" className={styles.primaryButton}>
               Find Skills
             </Link>
-            <Link href="/offer-skills" className={styles.secondaryButton}>
+            <Link href="/signup" className={styles.secondaryButton}>
               Offer Your Skills
             </Link>
           </div>

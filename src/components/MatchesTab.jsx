@@ -1,6 +1,7 @@
 import styles from "./MatchesTab.module.css";
 import { useState, useEffect } from "react";
 import ViewProfile from "./Viewprofile";
+import { useCallback } from "react";
 
 export default function MatchesTab({ setActiveTab }) {
   const [matches, setMatches] = useState([]);
@@ -59,7 +60,7 @@ export default function MatchesTab({ setActiveTab }) {
     setSelectedUser(null);
   };
 
-  const handleConnect = async (userId) => {
+  const handleConnect = useCallback(async (userId) => {
     try {
       const response = await fetch("api/conncetion/send", {
         method: "POST",
@@ -87,7 +88,7 @@ export default function MatchesTab({ setActiveTab }) {
         "error"
       );
     }
-  };
+  }, []);
 
   const fetchMatches = async () => {
     try {
@@ -108,17 +109,17 @@ export default function MatchesTab({ setActiveTab }) {
     }
   };
 
-  const getMatchScoreColor = (score) => {
+  const getMatchScoreColor = useCallback((score) => {
     if (score >= 3) return styles.highMatch;
     if (score >= 2) return styles.mediumMatch;
     return styles.lowMatch;
-  };
+  }, []);
 
-  const getMatchScoreText = (score) => {
+  const getMatchScoreText = useCallback((score) => {
     if (score >= 3) return "High Match";
     if (score >= 2) return "Good Match";
     return "Potential Match";
-  };
+  }, []);
 
   if (isLoading) {
     return (
