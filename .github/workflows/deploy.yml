@@ -22,11 +22,17 @@ jobs:
         run: npm ci
 
       - name: Build the app
+
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
         run: npm run build # <--- This runs the actual build command
+
+        run: npm run build
+      - name: Deploy to Vercel
+        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+
 
       - name: Deploy to Vercel
         env:
