@@ -3,7 +3,7 @@ name: Build & Deploy
 on:
   push:
     branches:
-      - main # Change this if you're using a different default branch
+      - main
 
 jobs:
   build:
@@ -21,16 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint (optional)
-        run: npm run lint
-
       - name: Build the app
-        run: npm run build
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+        run: npm run build # <--- This runs the actual build command
+
       - name: Deploy to Vercel
-      run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      # Optional: Test
-      # - name: Run tests
-      #   run: npm test
-
-      # Optional: Upload artifacts if needed
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
