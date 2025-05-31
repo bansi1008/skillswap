@@ -1,6 +1,10 @@
 import styles from "./OverviewTab.module.css";
 import Allconnectionmodel from "./Allconnectionmodel";
 import { useState, useEffect } from "react";
+import Chat from "./Chat";
+import { set } from "mongoose";
+import { database } from "../model/firebase";
+import { ref, onValue, off } from "firebase/database";
 
 export default function OverviewTab({ userData, onProfileUpdate }) {
   const [form, setForm] = useState({
@@ -17,6 +21,28 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
   const [user, setuser] = useState(null);
   const [connectionCount, setConnectionCount] = useState(0);
   const [invitationCount, setInvitationCount] = useState(0);
+  const [chat, setChat] = useState(false);
+
+  const handlechat = async () => {
+    if (!chat) {
+      // Opening chat - fetch connections data if not already available
+      if (!user || user.length === 0) {
+        try {
+          const response = await fetch("/api/conncetion/allconnection");
+          if (response.ok) {
+            const data = await response.json();
+            const alluser = data.users;
+            setuser(alluser || []);
+          } else {
+            console.error("Failed to fetch connections for chat");
+          }
+        } catch (error) {
+          console.error("Error fetching connections for chat:", error);
+        }
+      }
+    }
+    setChat(!chat);
+  };
 
   // Fetch counts when component mounts
   useEffect(() => {
@@ -122,6 +148,7 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
 
       // Always open the modal - let AllConnectionModel handle empty state
       setuser(alluser || []);
+
       setActiveTab(true);
     } catch (error) {
       console.error("Error fetching connections:", error);
@@ -327,6 +354,12 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
                 {invitationCount > 0 && (
                   <span className={styles.badge}>{invitationCount}</span>
                 )}
+              </div>
+            </button>
+            <button className={styles.actionButton} onClick={handlechat}>
+              <div className={styles.actionButtonContent}>
+                <span className={styles.actionIcon}>💬</span>
+                {isLoading ? "Loading..." : "Messages"}
               </div>
             </button>
           </div>
@@ -619,7 +652,18 @@ export default function OverviewTab({ userData, onProfileUpdate }) {
           </div>
         )}
       </div>
-      <Allconnectionmodel ActiveTab={ActiveTab} user={user} />
+      <Allconnectionmodel
+        ActiveTab={ActiveTab}
+        user={user}
+        currentUserId={userData._id || userData.id}
+      />
+      {chat && (
+        <Chat
+          user={user}
+          onClose={() => setChat(false)}
+          currentUserId={userData._id || userData.id}
+        />
+      )}
     </div>
   );
 }
