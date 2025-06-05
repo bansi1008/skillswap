@@ -77,7 +77,6 @@ export async function POST(request) {
       );
     }
 
-    // Normalize email to lowercase before search
     const normalizedEmail = email.trim().toLowerCase();
 
     const existingUser = await User.findOne({ email: normalizedEmail });
