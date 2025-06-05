@@ -33,7 +33,7 @@ export default function Dashboard() {
         }
 
         const data = await res.json();
-        console.log("User data:", data.user);
+
         setUserData(data.user);
       } catch (err) {
         setError(err.message);
@@ -104,7 +104,6 @@ export default function Dashboard() {
       }
 
       const data = await res.json();
-      console.log("Skills updated:", data);
 
       // Update userData with new skills
       setUserData((prev) => ({

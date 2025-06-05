@@ -1,4 +1,4 @@
-"use client"; // for Next.js 13+ with App Router
+"use client";
 
 import { useEffect, useState } from "react";
 import { database } from "../model/firebase";
@@ -29,7 +29,7 @@ export default function Chat({ user, onClose, currentUserId }) {
             id: key,
             ...value,
           }));
-          // Sort messages by timestamp
+
           messagesList.sort(
             (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
           );
@@ -60,7 +60,7 @@ export default function Chat({ user, onClose, currentUserId }) {
         text: input.trim(),
         senderId: currentUserId,
         receiverId: selectedUser._id,
-        senderName: "You", // You can pass actual user name as prop
+        senderName: "You",
         createdAt: new Date().toISOString(),
       });
       setInput("");
@@ -73,7 +73,7 @@ export default function Chat({ user, onClose, currentUserId }) {
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      p();
     }
   };
 

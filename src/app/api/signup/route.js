@@ -27,8 +27,8 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    const existingUser = await User.findOne({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return new Response(
         JSON.stringify({
@@ -55,7 +55,7 @@ export async function POST(request) {
 
     const newUser = new User({
       name,
-      email,
+      email: normalizedEmail,
       password,
       confirmPassword,
       location,
